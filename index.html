@@ -281,7 +281,7 @@
                 <div class="col-lg-8">
                     <div class="contact-form text-center">
                         <div id="success"></div>
-                        <form name="sentMessage" id="contactForm" novalidate="novalidate">
+                        <form name="sentMessage" id="contact-form" novalidate="novalidate">
                             <div class="form-row">
                                 <div class="control-group col-sm-6">
                                     <input type="text" class="form-control p-4" id="name" placeholder="Tu Nombre" required="required" data-validation-required-message="Por favor ingresa tu nombre" />
@@ -303,6 +303,7 @@
                             <div>
                                 <button class="btn btn-outline-primary" type="submit" id="sendMessageButton">Enviar Mensaje</button>
                             </div>
+                            <div id="status-message" class="mt-3"></div>
                         </form>
                     </div>
                 </div>
@@ -355,6 +356,47 @@
 
     <!-- Template Javascript -->
     <script src="script.js"></script>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        emailjs.init('XAfClw-7x_KP8Y2qO'); // Tu Public Key de EmailJS
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const statusMessage = document.getElementById('status-message');
+
+            if (!name || !email || !subject || !message) {
+                statusMessage.textContent = 'Por favor, completa todos los campos.';
+                statusMessage.style.color = 'red';
+                return;
+            }
+
+            const templateParams = {
+                name: name,
+                email: email,
+                subject: subject,
+                message: message
+            };
+
+            statusMessage.textContent = 'Enviando...';
+            statusMessage.style.color = '#333';
+
+            emailjs.send('service_v5r24vf', 'template_nkffus8', templateParams)
+                .then(function(response) {
+                    statusMessage.textContent = '¡Mensaje enviado con éxito!';
+                    statusMessage.style.color = 'green';
+                    document.getElementById('contact-form').reset();
+                }, function(error) {
+                    statusMessage.textContent = 'Error al enviar el mensaje. Inténtalo de nuevo.';
+                    statusMessage.style.color = 'red';
+                });
+        });
+    </script>
 </body>
 
 </html> 
